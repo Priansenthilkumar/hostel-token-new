@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KPR Mess Token</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<div class="panel">
+  <div class="panel-header">
+    <img src="kprietonline_logo.jpg" class="header-logo" alt="KPR"/>
+    <div>
+      <div class="panel-title">KPR Mess Token</div>
+      <div class="panel-sub">Hostel Mess</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="control-group tpp-group">
+      <label>Tokens per page</label>
+      <div class="tpp-row">
+        <button class="tpp-btn" onclick="setTPP(4,this)">4</button>
+        <button class="tpp-btn" onclick="setTPP(6,this)">6</button>
+        <button class="tpp-btn active" onclick="setTPP(8,this)">8</button>
+        <button class="tpp-btn" onclick="setTPP(10,this)">10</button>
+        <button class="tpp-btn" onclick="setTPP(12,this)">12</button>
+        <span class="tpp-custom-wrap">
+          <input id="tppCustom" type="number" min="1" max="100" placeholder="Custom"
+            oninput="setTPPCustom(this.value)" title="Custom tokens per page"/>
+        </span>
+      </div>
+      <div class="tpp-hint" id="tppHint">8 tokens per page · PDF will auto-paginate</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>How many tokens?</label>
+      <div class="count-row">
+        <button onclick="changeCount(-10)">−10</button>
+        <button onclick="changeCount(-1)">−</button>
+        <input id="countDisplay" type="number" min="1" max="9999" value="20" oninput="setCountFromInput(this.value)" onchange="setCountFromInput(this.value)"/>
+        <button onclick="changeCount(1)">+</button>
+        <button onclick="changeCount(10)">+10</button>
+      </div>
+      <div class="quick-row">
+        <button onclick="setCount(10)">10</button>
+        <button onclick="setCount(20)">20</button>
+        <button onclick="setCount(30)">30</button>
+        <button onclick="setCount(50)">50</button>
+        <button onclick="setCount(100)">100</button>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label>Meal Label</label>
+      <input id="mealLabel" type="text" placeholder="e.g. Friday Lunch"
+        oninput="setMealLabel(this.value)"
+        style="width:100%;padding:8px 12px;border:1.5px solid var(--bg);border-radius:8px;font-family:'Inter',sans-serif;font-size:.9rem;font-weight:600;color:var(--bg);outline:none;"/>
+    </div>
+
+    <div class="control-group">
+      <label>Colour</label>
+      <div class="color-row">
+        <button class="csw active" style="background:#0a1f5c" onclick="setColor('#0a1f5c','#d4af37',this)">Navy</button>
+        <button class="csw" style="background:#003366" onclick="setColor('#003366','#ffffff',this)">Blue</button>
+        <button class="csw" style="background:#7b0d1e" onclick="setColor('#7b0d1e','#f5c518',this)">Maroon</button>
+        <button class="csw" style="background:#1a4731" onclick="setColor('#1a4731','#e8d5a3',this)">Green</button>
+        <button class="csw" style="background:#3d0066" onclick="setColor('#3d0066','#f0c040',this)">Purple</button>
+        <button class="csw" style="background:#2c2c2c" onclick="setColor('#2c2c2c','#e0e0e0',this)">Black</button>
+        <input type="color" value="#0a1f5c" title="Custom colour" oninput="setColor(this.value,'#ffffff',null)"/>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-row">
+    <button class="btn-print" onclick="window.print()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print
+    </button>
+    <button class="btn-pdf" onclick="savePDF()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Save as PDF
+    </button>
+  </div>
+</div>
+
+<div class="preview-label">Preview</div>
+<div class="token-grid" id="tokenGrid"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
