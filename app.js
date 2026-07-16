@@ -18,16 +18,18 @@ const VERIFY_SYMBOLS = [
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>'
 ];
 
+// Cached once at startup — symbol never changes within a session
+let _cachedSymbol;
 function getVerifySymbol() {
+  if (_cachedSymbol !== undefined) return _cachedSymbol;
   const now = new Date();
-  const day = now.getDay(); // 0=Sun,1=Mon,...,3=Wed,5=Fri
-  if (day !== 3 && day !== 5) return null;
-  // Seed: ISO week number * 10 + (day===5 ? 1 : 0) — unique per Wed/Fri slot
+  const day = now.getDay();
+  if (day !== 3 && day !== 5) { _cachedSymbol = null; return null; }
   const startOfYear = new Date(now.getFullYear(), 0, 1);
   const weekNum = Math.ceil(((now - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7);
   const seed = weekNum * 10 + (day === 5 ? 1 : 0);
-  const idx = seed % VERIFY_SYMBOLS.length;
-  return VERIFY_SYMBOLS[idx];
+  _cachedSymbol = VERIFY_SYMBOLS[seed % VERIFY_SYMBOLS.length];
+  return _cachedSymbol;
 }
 
 let bg  = '#0a1f5c';
@@ -37,11 +39,17 @@ let tokensPerPage = 8;
 let mealLabel = localStorage.getItem('kpriet_meal') || 'Friday Lunch';
 const MAX_TOKENS = 9999;
 const TPP_KEY = 'kpriet_tpp';
+let _renderTimer = null;
+
+function scheduleRender() {
+  if (_renderTimer) clearTimeout(_renderTimer);
+  _renderTimer = setTimeout(render, 80);
+}
 
 function setMealLabel(val) {
   mealLabel = val.trim() || 'Friday Lunch';
   localStorage.setItem('kpriet_meal', mealLabel);
-  render();
+  scheduleRender();
 }
 
 function loadTPP() {
@@ -121,9 +129,10 @@ function render() {
   document.documentElement.style.setProperty('--acc', acc);
   const el = document.getElementById('countDisplay');
   if (el) el.value = count;
-  let html = '';
-  for (let i = 1; i <= count; i++) html += buildToken(i, count);
-  document.getElementById('tokenGrid').innerHTML = html;
+  // Build all HTML in one string, set innerHTML once
+  const parts = [];
+  for (let i = 1; i <= count; i++) parts.push(buildToken(i, count));
+  document.getElementById('tokenGrid').innerHTML = parts.join('');
 }
 
 function setCountFromInput(val) {
@@ -132,7 +141,7 @@ function setCountFromInput(val) {
   const n = Number(raw);
   if (!Number.isInteger(n) || n < 1 || n > MAX_TOKENS) return;
   count = n;
-  render();
+  scheduleRender();
 }
 
 function changeCount(d) {
