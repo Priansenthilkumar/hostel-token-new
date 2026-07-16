@@ -125,7 +125,7 @@ function buildToken(n, total) {
     + verifyBadge
     + '</div>'
     + '<div class="tok-meal-row" style="background:' + bg + ';color:' + acc + ';">' + mealLabel + '</div>'
-    + '<div class="tok-date" style="color:#b0b8c1;font-weight:700;font-size:.60rem;">' + getTodayDate() + '</div>'
+    + '<div class="tok-date" style="color:#555e6b;font-weight:700;font-size:.60rem;">' + getTodayDate() + '</div>'
     + '</div>'
     + '</div>';
 }
