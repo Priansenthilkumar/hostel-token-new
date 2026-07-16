@@ -38,21 +38,7 @@ body {
   padding: 0 34px 28px;
   overflow: hidden;
 }
-/* rainbow shimmer top stripe */
-.panel::before {
-  content: '';
-  display: block;
-  height: 5px;
-  margin: 0 -34px 28px;
-  background: linear-gradient(90deg, #ff0080, #ff8c00, #ffe000, #00e676, #00b0ff, #d500f9, #ff0080);
-  background-size: 300% 100%;
-  animation: shimmer 4s linear infinite;
-  border-radius: 24px 24px 0 0;
-}
-@keyframes shimmer {
-  from { background-position: 0% 0%; }
-  to   { background-position: 200% 0%; }
-}
+.panel::before { display: none; }
 
 /* ── Panel Header ─────────────────────────────────────────── */
 .panel-header {
