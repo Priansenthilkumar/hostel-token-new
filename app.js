@@ -175,15 +175,30 @@ window.addEventListener('DOMContentLoaded', function () {
 
 async function savePDF() {
   const btn = document.querySelector('.btn-pdf');
-  const original = btn.textContent;
-  btn.textContent = 'Generating\u2026';
+  const original = btn.innerHTML;
+  btn.innerHTML = 'Generating…';
   btn.disabled = true;
 
   const { jsPDF } = window.jspdf;
-  const A4_W = 210, A4_H = 297, MARGIN = 8;
+  const A4_W = 210, A4_H = 297, MARGIN = 10;
   const printW = A4_W - MARGIN * 2;
   const printH = A4_H - MARGIN * 2;
+  const MM_TO_PX = 96 / 25.4;
 
+  // Measure the exact rendered size of one token from the live grid
+  const grid = document.getElementById('tokenGrid');
+  const liveTok = grid.querySelector('.tok');
+  if (!liveTok) { btn.innerHTML = original; btn.disabled = false; return; }
+
+  const tokRect = liveTok.getBoundingClientRect();
+  const tokW = Math.round(tokRect.width);
+  const tokH = Math.round(tokRect.height);
+
+  // Measure the gap between tokens
+  const gridCS = window.getComputedStyle(grid);
+  const gap = parseFloat(gridCS.columnGap) || 12;
+
+  // Determine columns from tokensPerPage
   const tpp = tokensPerPage;
   let cols;
   if (tpp <= 2) cols = 1;
@@ -192,12 +207,21 @@ async function savePDF() {
   else cols = 4;
   const rows = Math.ceil(tpp / cols);
 
-  const DPI_SCALE = 3;
-  const PX_W = Math.round(printW * DPI_SCALE);
-  const PX_H = Math.round(printH * DPI_SCALE);
-  const GAP = Math.round(3 * DPI_SCALE);
-  const tokW = Math.floor((PX_W - GAP * (cols - 1)) / cols);
-  const tokH = Math.floor((PX_H - GAP * (rows - 1)) / rows);
+  // Total canvas size for one page (exact preview dimensions)
+  const SCALE = 2; // retina sharpness
+  const pageCanvasW = cols * tokW + (cols - 1) * gap;
+  const pageCanvasH = rows * tokH + (rows - 1) * gap;
+
+  // How much to shrink to fit A4 printable area
+  const fitScale = Math.min(
+    (printW * MM_TO_PX) / pageCanvasW,
+    (printH * MM_TO_PX) / pageCanvasH,
+    1
+  );
+  const finalMmW = (pageCanvasW * fitScale) / MM_TO_PX;
+  const finalMmH = (pageCanvasH * fitScale) / MM_TO_PX;
+  const xOff = MARGIN + (printW - finalMmW) / 2;
+  const yOff = MARGIN + (printH - finalMmH) / 2;
 
   const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const totalPages = Math.ceil(count / tpp);
@@ -207,18 +231,21 @@ async function savePDF() {
       if (page > 0) pdf.addPage();
 
       const start = page * tpp + 1;
-      const end   = Math.min(start + tpp - 1, count);
+      const end = Math.min(start + tpp - 1, count);
 
+      // Build an off-screen grid that exactly mirrors the preview grid
       const wrap = document.createElement('div');
       Object.assign(wrap.style, {
-        position: 'fixed', top: '-9999px', left: '-9999px',
-        width: PX_W + 'px',
+        position: 'fixed',
+        top: '-99999px',
+        left: '-99999px',
+        width: pageCanvasW + 'px',
+        height: pageCanvasH + 'px',
         display: 'grid',
         gridTemplateColumns: 'repeat(' + cols + ', ' + tokW + 'px)',
         gridTemplateRows: 'repeat(' + rows + ', ' + tokH + 'px)',
-        gap: GAP + 'px',
+        gap: gap + 'px',
         background: '#ffffff',
-        padding: '0',
         boxSizing: 'border-box',
       });
 
@@ -226,54 +253,40 @@ async function savePDF() {
         const cell = document.createElement('div');
         cell.innerHTML = buildToken(i, count);
         const tok = cell.firstElementChild;
+        // Force exact same dimensions as the live preview token
         Object.assign(tok.style, {
           width: tokW + 'px',
           height: tokH + 'px',
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
           boxSizing: 'border-box',
+          overflow: 'hidden',
         });
-        const scale = tokH / 120;
-        tok.querySelector('.tok-num').style.fontSize = Math.max(10, Math.round(26 * scale)) + 'px';
-        tok.querySelector('.tok-meal-row').style.fontSize = Math.max(6, Math.round(9 * scale)) + 'px';
-        tok.querySelector('.tok-inst').style.fontSize = Math.max(5, Math.round(8 * scale)) + 'px';
-        const wrap2 = tok.querySelector('.tok-num-wrap');
-        const sz = Math.max(40, Math.round(72 * scale));
-        wrap2.style.width = sz + 'px';
-        wrap2.style.height = sz + 'px';
-        tok.querySelector('.tok-body').style.flex = '1';
-        tok.querySelector('.tok-body').style.display = 'flex';
-        tok.querySelector('.tok-body').style.flexDirection = 'column';
-        tok.querySelector('.tok-body').style.alignItems = 'center';
-        tok.querySelector('.tok-body').style.justifyContent = 'center';
         wrap.appendChild(tok);
       }
 
       document.body.appendChild(wrap);
 
       const canvas = await html2canvas(wrap, {
-        scale: 1,
+        scale: SCALE,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
-        width: PX_W,
-        height: PX_H,
-        windowWidth: PX_W,
-        windowHeight: PX_H,
+        width: pageCanvasW,
+        height: pageCanvasH,
+        windowWidth: pageCanvasW,
+        windowHeight: pageCanvasH,
       });
 
       document.body.removeChild(wrap);
 
-      const imgData = canvas.toDataURL('image/jpeg', 0.95);
-      pdf.addImage(imgData, 'JPEG', MARGIN, MARGIN, printW, printH);
+      const imgData = canvas.toDataURL('image/jpeg', 0.97);
+      pdf.addImage(imgData, 'JPEG', xOff, yOff, finalMmW, finalMmH);
     }
 
     pdf.save('KPR_Mess_Tokens.pdf');
   } catch (err) {
     console.error('PDF error:', err);
   } finally {
-    btn.textContent = original;
+    btn.innerHTML = original;
     btn.disabled = false;
   }
 }
