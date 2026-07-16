@@ -180,16 +180,18 @@ async function savePDF() {
   btn.disabled = true;
 
   const { jsPDF } = window.jspdf;
-
   const A4_W = 210, A4_H = 297;
   const MARGIN = 10;       // mm
   const GAP_MM = 2;        // gap between tokens in mm
-  const COLS = 5, ROWS = 5, TPP = 25;
   const RENDER_SCALE = 3;
   const PX_TO_MM = 25.4 / 96;
 
   const printW = A4_W - MARGIN * 2;  // 190 mm
   const printH = A4_H - MARGIN * 2;  // 277 mm
+
+  const tpp = Math.max(1, Math.min(tokensPerPage || 8, 100));
+  const cols = Math.min(4, tpp);
+  const rows = Math.ceil(tpp / cols);
 
   // Step 1: measure native token size (let CSS resolve naturally)
   const probe = document.createElement('div');
@@ -204,47 +206,38 @@ async function savePDF() {
   const nativeH = probe.firstElementChild.offsetHeight;
   document.body.removeChild(probe);
 
-  // Step 2: target mm size per token to fill A4 (preserve aspect ratio)
-  const slotMmW = (printW - (COLS - 1) * GAP_MM) / COLS;
-  const slotMmH = (printH - (ROWS - 1) * GAP_MM) / ROWS;
-  const nativeAR = nativeW / nativeH;
-  const slotAR   = slotMmW / slotMmH;
-  const tokMmW   = nativeAR > slotAR ? slotMmW : slotMmH * nativeAR;
-  const tokMmH   = nativeAR > slotAR ? slotMmW / nativeAR : slotMmH;
-
-  // Final grid mm size (centred on page)
-  const gridMmW = COLS * tokMmW + (COLS - 1) * GAP_MM;
-  const gridMmH = ROWS * tokMmH + (ROWS - 1) * GAP_MM;
-  const xOff    = MARGIN + (printW - gridMmW) / 2;
-  const yOff    = MARGIN + (printH - gridMmH) / 2;
-
-  // Step 3: build off-screen grid at native px — no forced height, no transform
-  const gapPx      = Math.round(GAP_MM * 96 / 25.4);
-  const nativeGridW = COLS * nativeW + (COLS - 1) * gapPx;
-  const nativeGridH = ROWS * nativeH + (ROWS - 1) * gapPx;
+  // Step 2: calculate page-scaled mm dimensions using native preview size
+  const nativeMmW = nativeW * PX_TO_MM;
+  const nativeMmH = nativeH * PX_TO_MM;
+  const gridMmW = cols * nativeMmW + (cols - 1) * GAP_MM;
+  const gridMmH = rows * nativeMmH + (rows - 1) * GAP_MM;
+  const scaleToFit = Math.min(1, printW / gridMmW, printH / gridMmH);
+  const targetGridMmW = gridMmW * scaleToFit;
+  const targetGridMmH = gridMmH * scaleToFit;
+  const xOff = MARGIN + (printW - targetGridMmW) / 2;
+  const yOff = MARGIN + (printH - targetGridMmH) / 2;
 
   const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-  const totalPages = Math.ceil(count / TPP);
+  const totalPages = Math.ceil(count / tpp);
 
   try {
     for (let page = 0; page < totalPages; page++) {
       if (page > 0) pdf.addPage();
 
-      const start = page * TPP + 1;
-      const end   = Math.min(start + TPP - 1, count);
+      const start = page * tpp + 1;
+      const end = Math.min(start + tpp - 1, count);
 
       const wrap = document.createElement('div');
       Object.assign(wrap.style, {
         position:            'fixed',
         top:                 '-99999px',
         left:                '0',
-        width:               nativeGridW + 'px',
-        height:              nativeGridH + 'px',
+        width:               cols * nativeW + (cols - 1) * Math.round(GAP_MM * 96 / 25.4) + 'px',
         display:             'grid',
-        gridTemplateColumns: 'repeat(' + COLS + ', ' + nativeW + 'px)',
-        gridTemplateRows:    'repeat(' + ROWS + ', ' + nativeH + 'px)',
-        columnGap:           gapPx + 'px',
-        rowGap:              gapPx + 'px',
+        gridTemplateColumns: 'repeat(' + cols + ', ' + nativeW + 'px)',
+        gridTemplateRows:    'repeat(' + rows + ', ' + nativeH + 'px)',
+        columnGap:           Math.round(GAP_MM * 96 / 25.4) + 'px',
+        rowGap:              Math.round(GAP_MM * 96 / 25.4) + 'px',
         background:          '#ffffff',
         boxSizing:           'border-box',
       });
@@ -271,22 +264,21 @@ async function savePDF() {
       await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
 
       const canvas = await html2canvas(wrap, {
-        scale:           RENDER_SCALE,
-        useCORS:         true,
-        allowTaint:      true,
+        scale:        RENDER_SCALE,
+        useCORS:      true,
+        allowTaint:   true,
         backgroundColor: '#ffffff',
-        width:           nativeGridW,
-        height:          nativeGridH,
-        x: 0, y: 0, scrollX: 0, scrollY: 0,
-        windowWidth:     nativeGridW,
-        windowHeight:    nativeGridH,
-        logging:         false,
       });
 
       document.body.removeChild(wrap);
 
-      // Place image at exact target mm size — jsPDF scales it to fit
-      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', xOff, yOff, gridMmW, gridMmH);
+      const imgWidthMm = canvas.width * PX_TO_MM / RENDER_SCALE;
+      const imgHeightMm = canvas.height * PX_TO_MM / RENDER_SCALE;
+      const finalScale = Math.min(1, targetGridMmW / imgWidthMm, targetGridMmH / imgHeightMm);
+      const targetWidth = imgWidthMm * finalScale;
+      const targetHeight = imgHeightMm * finalScale;
+      const imgData = canvas.toDataURL('image/png');
+      pdf.addImage(imgData, 'PNG', xOff, yOff, targetWidth, targetHeight);
     }
 
     pdf.save('KPR_Mess_Tokens.pdf');
