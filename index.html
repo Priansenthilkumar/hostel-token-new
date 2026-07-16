@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>KPR Mess Token</title>
   <link rel="stylesheet" href="style.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Raleway:wght@700;800;900&display=swap" rel="stylesheet"/>
 </head>
 <body>
 <div class="bg-grid"></div>
@@ -19,24 +19,7 @@
     </div>
   </div>
 
-  <div class="controls">
-    <div class="control-group tpp-group">
-      <label>Tokens per page</label>
-      <div class="tpp-row">
-        <button class="tpp-btn" onclick="setTPP(4,this)">4</button>
-        <button class="tpp-btn" onclick="setTPP(6,this)">6</button>
-        <button class="tpp-btn active" onclick="setTPP(8,this)">8</button>
-        <button class="tpp-btn" onclick="setTPP(10,this)">10</button>
-        <button class="tpp-btn" onclick="setTPP(12,this)">12</button>
-        <span class="tpp-custom-wrap">
-          <input id="tppCustom" type="number" min="1" max="100" placeholder="Custom"
-            oninput="setTPPCustom(this.value)" title="Custom tokens per page"/>
-        </span>
-      </div>
-    </div>
-  </div>
-
-  <div class="controls">
+<div class="controls">
     <div class="control-group">
       <label>How many tokens?</label>
       <input id="countDisplay" type="number" min="1" max="9999" value="20" oninput="setCountFromInput(this.value)"/>
