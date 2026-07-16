@@ -312,7 +312,7 @@ body {
 
 .btn-print {
   background: linear-gradient(135deg, #023A22 0%, #003152 100%);
-  color: #d4af37;
+  color: #a89a6a;
   box-shadow: 0 6px 24px rgba(2,58,34,.55);
 }
 .btn-print:hover {
@@ -478,6 +478,23 @@ body {
 /* ══════════════════════════════════════════════════════════ */
 
 .print-only { display: none; }
+
+/* ── Footer ───────────────────────────────────────────────── */
+.site-footer {
+  text-align: center;
+  padding: 18px 16px 28px;
+  font-family: 'Poppins', sans-serif;
+  font-size: .75rem;
+  font-weight: 500;
+  color: rgba(255,255,255,.60);
+  line-height: 1.8;
+  letter-spacing: .02em;
+}
+.site-footer p:first-child {
+  color: rgba(255,255,255,.85);
+  font-weight: 600;
+}
+@media print { .site-footer { display: none !important; } }
 
 /* ── Print media ──────────────────────────────────────────── */
 @media print {
