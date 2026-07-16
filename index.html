@@ -39,20 +39,7 @@
   <div class="controls">
     <div class="control-group">
       <label>How many tokens?</label>
-      <div class="count-row">
-        <button onclick="changeCount(-10)">−10</button>
-        <button onclick="changeCount(-1)">−</button>
-        <input id="countDisplay" type="number" min="1" max="9999" value="20" oninput="setCountFromInput(this.value)"/>
-        <button onclick="changeCount(1)">+</button>
-        <button onclick="changeCount(10)">+10</button>
-      </div>
-      <div class="quick-row">
-        <button onclick="setCount(10)">10</button>
-        <button onclick="setCount(20)">20</button>
-        <button onclick="setCount(30)">30</button>
-        <button onclick="setCount(50)">50</button>
-        <button onclick="setCount(100)">100</button>
-      </div>
+      <input id="countDisplay" type="number" min="1" max="9999" value="20" oninput="setCountFromInput(this.value)"/>
     </div>
 
     <div class="control-group">

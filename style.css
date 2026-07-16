@@ -183,15 +183,15 @@ body {
 
 /* count number input */
 #countDisplay {
-  width: 92px;
-  text-align: center;
+  width: 100%;
+  text-align: left;
   font-family: 'Inter', sans-serif;
-  font-size: 1.4rem;
+  font-size: 1rem;
   font-weight: 700;
   color: #fff;
   border: 1px solid rgba(255,255,255,.18);
   border-radius: var(--input-radius);
-  padding: 5px 8px;
+  padding: 9px 14px;
   outline: none;
   -moz-appearance: textfield;
   appearance: textfield;
@@ -374,7 +374,7 @@ body {
   position: absolute;
   bottom: 0; left: 0; right: 0;
   height: 3px;
-  background: var(--t-acc, #d4af37);
+  background: var(--t-acc, #efede8);
 }
 .tok-logo {
   width: 30px;
