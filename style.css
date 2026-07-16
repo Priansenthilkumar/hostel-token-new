@@ -188,14 +188,14 @@ body {
   font-family: 'Inter', sans-serif;
   font-size: 1rem;
   font-weight: 700;
-  color: #fff;
+  color: #ffffff;
   border: 1px solid rgba(255,255,255,.18);
   border-radius: var(--input-radius);
   padding: 9px 14px;
   outline: none;
   -moz-appearance: textfield;
   appearance: textfield;
-  background: rgba(255,255,255,.08);
+  background: #000000;
   transition: border-color .15s, box-shadow .15s;
 }
 #countDisplay:focus {
