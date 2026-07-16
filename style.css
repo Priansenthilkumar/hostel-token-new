@@ -484,15 +484,25 @@ body {
   text-align: center;
   padding: 18px 16px 28px;
   font-family: 'Poppins', sans-serif;
+}
+.footer-box {
+  display: inline-block;
+  background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(212,175,55,.45);
+  border-radius: 12px;
+  padding: 14px 28px;
+  line-height: 1.9;
+}
+.footer-box p {
   font-size: .75rem;
   font-weight: 500;
-  color: rgba(255,255,255,.60);
-  line-height: 1.8;
+  color: rgba(255,255,255,.65);
   letter-spacing: .02em;
 }
-.site-footer p:first-child {
-  color: rgba(255,255,255,.85);
-  font-weight: 600;
+.footer-box p:first-child {
+  color: #d4af37;
+  font-weight: 700;
+  font-size: .80rem;
 }
 @media print { .site-footer { display: none !important; } }
 
