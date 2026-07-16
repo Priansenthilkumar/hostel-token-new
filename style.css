@@ -493,8 +493,8 @@ body::before {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 72px;
-  height: 72px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
   border: 2.5px solid;
   margin-bottom: 0;
@@ -619,7 +619,7 @@ body::before {
   .preview-label { margin: 20px 0 12px; }
   .token-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 0 10px 32px; }
   .tok-num { font-size: 1.3rem; }
-  .tok-num-wrap { width: 60px; height: 60px; }
+  .tok-num-wrap { width: 72px; height: 72px; }
 }
 @media (max-width: 360px) {
   .panel { margin: 6px; padding: 12px 10px; }
