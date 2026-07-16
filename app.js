@@ -183,22 +183,17 @@ async function savePDF() {
   const A4_W = 210, A4_H = 297, MARGIN = 10;
   const printW = A4_W - MARGIN * 2;
   const printH = A4_H - MARGIN * 2;
-  const MM_TO_PX = 96 / 25.4;
 
-  // Measure the exact rendered size of one token from the live grid
   const grid = document.getElementById('tokenGrid');
-  const liveTok = grid.querySelector('.tok');
-  if (!liveTok) { btn.innerHTML = original; btn.disabled = false; return; }
+  const firstTok = grid.querySelector('.tok');
+  if (!firstTok) { btn.innerHTML = original; btn.disabled = false; return; }
 
-  const tokRect = liveTok.getBoundingClientRect();
-  const tokW = Math.round(tokRect.width);
-  const tokH = Math.round(tokRect.height);
+  // Measure exact rendered token size from the live DOM
+  const r = firstTok.getBoundingClientRect();
+  const tokW = r.width;
+  const tokH = r.height;
+  const dpr  = window.devicePixelRatio || 1;
 
-  // Measure the gap between tokens
-  const gridCS = window.getComputedStyle(grid);
-  const gap = parseFloat(gridCS.columnGap) || 12;
-
-  // Determine columns from tokensPerPage
   const tpp = tokensPerPage;
   let cols;
   if (tpp <= 2) cols = 1;
@@ -207,79 +202,98 @@ async function savePDF() {
   else cols = 4;
   const rows = Math.ceil(tpp / cols);
 
-  // Total canvas size for one page (exact preview dimensions)
-  const SCALE = 2; // retina sharpness
-  const pageCanvasW = cols * tokW + (cols - 1) * gap;
-  const pageCanvasH = rows * tokH + (rows - 1) * gap;
+  const gridCS  = window.getComputedStyle(grid);
+  const colGap  = parseFloat(gridCS.columnGap) || 12;
+  const rowGap  = parseFloat(gridCS.rowGap)    || 12;
 
-  // How much to shrink to fit A4 printable area
-  const fitScale = Math.min(
-    (printW * MM_TO_PX) / pageCanvasW,
-    (printH * MM_TO_PX) / pageCanvasH,
-    1
-  );
-  const finalMmW = (pageCanvasW * fitScale) / MM_TO_PX;
-  const finalMmH = (pageCanvasH * fitScale) / MM_TO_PX;
-  const xOff = MARGIN + (printW - finalMmW) / 2;
-  const yOff = MARGIN + (printH - finalMmH) / 2;
+  // Physical pixel size of one page-worth of tokens
+  const pageW = cols * tokW + (cols - 1) * colGap;
+  const pageH = rows * tokH + (rows - 1) * rowGap;
+
+  // mm size that keeps the exact same aspect ratio, fitting inside printable area
+  const scaleToFit = Math.min(printW / pageW, printH / pageH, 1);
+  // Use 1px = 1/96 inch = 25.4/96 mm
+  const PX_TO_MM   = 25.4 / 96;
+  const imgMmW     = pageW * PX_TO_MM * scaleToFit;
+  const imgMmH     = pageH * PX_TO_MM * scaleToFit;
+  const xOff       = MARGIN + (printW - imgMmW) / 2;
+  const yOff       = MARGIN + (printH - imgMmH) / 2;
 
   const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const totalPages = Math.ceil(count / tpp);
+
+  // RENDER_SCALE: capture at 2× for sharpness but keep layout at 1×
+  const RENDER_SCALE = 2;
 
   try {
     for (let page = 0; page < totalPages; page++) {
       if (page > 0) pdf.addPage();
 
       const start = page * tpp + 1;
-      const end = Math.min(start + tpp - 1, count);
+      const end   = Math.min(start + tpp - 1, count);
 
-      // Build an off-screen grid that exactly mirrors the preview grid
+      // Build off-screen container using EXACT same px dimensions as the live grid
       const wrap = document.createElement('div');
       Object.assign(wrap.style, {
-        position: 'fixed',
-        top: '-99999px',
-        left: '-99999px',
-        width: pageCanvasW + 'px',
-        height: pageCanvasH + 'px',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(' + cols + ', ' + tokW + 'px)',
-        gridTemplateRows: 'repeat(' + rows + ', ' + tokH + 'px)',
-        gap: gap + 'px',
-        background: '#ffffff',
-        boxSizing: 'border-box',
+        position:              'fixed',
+        top:                   '-99999px',
+        left:                  '0px',          // must be in viewport column for correct font rendering
+        width:                 pageW + 'px',
+        height:                pageH + 'px',
+        display:               'grid',
+        gridTemplateColumns:   'repeat(' + cols + ', ' + tokW + 'px)',
+        gridTemplateRows:      'repeat(' + rows + ', ' + tokH + 'px)',
+        columnGap:             colGap + 'px',
+        rowGap:                rowGap + 'px',
+        background:            '#ffffff',
+        boxSizing:             'border-box',
+        overflow:              'hidden',
+        fontFamily:            gridCS.fontFamily,
       });
 
       for (let i = start; i <= end; i++) {
-        const cell = document.createElement('div');
-        cell.innerHTML = buildToken(i, count);
-        const tok = cell.firstElementChild;
-        // Force exact same dimensions as the live preview token
+        const tmp = document.createElement('div');
+        tmp.innerHTML = buildToken(i, count);
+        const tok = tmp.firstElementChild;
+        // Lock to exact preview pixel size — no flex stretching
         Object.assign(tok.style, {
-          width: tokW + 'px',
-          height: tokH + 'px',
-          boxSizing: 'border-box',
-          overflow: 'hidden',
+          width:      tokW + 'px',
+          height:     tokH + 'px',
+          minWidth:   tokW + 'px',
+          minHeight:  tokH + 'px',
+          maxWidth:   tokW + 'px',
+          maxHeight:  tokH + 'px',
+          boxSizing:  'border-box',
+          overflow:   'hidden',
+          flexShrink: '0',
         });
         wrap.appendChild(tok);
       }
 
       document.body.appendChild(wrap);
+      // Let browser paint before capturing
+      await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
 
       const canvas = await html2canvas(wrap, {
-        scale: SCALE,
-        useCORS: true,
-        allowTaint: true,
+        scale:       RENDER_SCALE,
+        useCORS:     true,
+        allowTaint:  true,
         backgroundColor: '#ffffff',
-        width: pageCanvasW,
-        height: pageCanvasH,
-        windowWidth: pageCanvasW,
-        windowHeight: pageCanvasH,
+        width:       pageW,
+        height:      pageH,
+        x:           0,
+        y:           0,
+        scrollX:     0,
+        scrollY:     0,
+        windowWidth:  pageW,
+        windowHeight: pageH,
+        logging:     false,
       });
 
       document.body.removeChild(wrap);
 
-      const imgData = canvas.toDataURL('image/jpeg', 0.97);
-      pdf.addImage(imgData, 'JPEG', xOff, yOff, finalMmW, finalMmH);
+      const imgData = canvas.toDataURL('image/png');
+      pdf.addImage(imgData, 'PNG', xOff, yOff, imgMmW, imgMmH);
     }
 
     pdf.save('KPR_Mess_Tokens.pdf');
