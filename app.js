@@ -120,7 +120,7 @@ function buildToken(n, total) {
     + '</div>'
     + '<div class="tok-body">'
     + '<div class="tok-num-wrap" style="border-color:' + acc + ';background:' + bg + '0f;">'
-    + '<span class="tok-no-label" style="color:' + bg + ';">NO.</span>'
+
     + '<span class="tok-num" style="color:' + bg + ';">' + num + '</span>'
     + verifyBadge
     + '</div>'
