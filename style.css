@@ -39,6 +39,7 @@ body {
   overflow: hidden;
 }
 .panel::before { display: none; }
+@keyframes shimmer {}
 
 /* ── Panel Header ─────────────────────────────────────────── */
 .panel-header {

@@ -43,7 +43,7 @@ let _renderTimer = null;
 
 function scheduleRender() {
   if (_renderTimer) clearTimeout(_renderTimer);
-  _renderTimer = setTimeout(render, 80);
+  _renderTimer = setTimeout(render, 400);
 }
 
 function setMealLabel(val) {
