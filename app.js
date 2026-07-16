@@ -183,7 +183,7 @@ async function savePDF() {
   const A4_W = 210, A4_H = 297;
   const MARGIN = 10;          // mm
   const GAP_MM = 2;           // mm gap between tokens
-  const COLS = 5, ROWS = 5, TPP = 25;
+  const COLS = 5, ROWS = 6, TPP = 30;
   const RENDER_SCALE = 3;
   const PX_TO_MM = 25.4 / 96;
   const MM_TO_PX = 96 / 25.4;
