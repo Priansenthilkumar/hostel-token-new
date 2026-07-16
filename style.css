@@ -550,12 +550,6 @@ body::after {
   text-align: center;
   letter-spacing: .5px;
   padding: 2px 8px 5px;
-  opacity: 1;
-  background: linear-gradient(135deg, var(--t-acc, #d4af37), #f0c040);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 0 4px rgba(212,175,55,.60));
 }
 /* ══════════════════════════════════════════════════════════ */
 
