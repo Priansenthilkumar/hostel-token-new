@@ -107,7 +107,7 @@ body {
 .tpp-btn {
   padding: 6px 15px;
   border: 1px solid rgba(255,255,255,.18);
-  background: rgba(255,255,255,.08);
+  background: #000000;
   color: #ffffff;
   border-radius: 22px;
   font-family: 'Inter', sans-serif;
@@ -145,7 +145,7 @@ body {
   text-align: center;
   -moz-appearance: textfield;
   appearance: textfield;
-  background: rgba(255,255,255,.08);
+  background: #000000;
   transition: border-color .15s, box-shadow .15s;
 }
 #tppCustom:focus {
