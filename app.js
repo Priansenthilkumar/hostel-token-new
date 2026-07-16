@@ -99,6 +99,11 @@ function padNum(n, total) {
   return String(n).padStart(digits, '0');
 }
 
+function getTodayDate() {
+  const d = new Date();
+  return d.getDate().toString().padStart(2,'0') + '/' + (d.getMonth()+1).toString().padStart(2,'0') + '/' + d.getFullYear();
+}
+
 function buildToken(n, total) {
   const num = padNum(n, total);
   const sym = getVerifySymbol();
@@ -120,6 +125,7 @@ function buildToken(n, total) {
     + verifyBadge
     + '</div>'
     + '<div class="tok-meal-row" style="background:' + bg + ';color:' + acc + ';">' + mealLabel + '</div>'
+    + '<div class="tok-date" style="color:' + bg + ';">' + getTodayDate() + '</div>'
     + '</div>'
     + '</div>';
 }
