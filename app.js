@@ -101,7 +101,9 @@ function padNum(n, total) {
 
 function getTodayDate() {
   const d = new Date();
-  return d.getDate().toString().padStart(2,'0') + '/' + (d.getMonth()+1).toString().padStart(2,'0') + '/' + d.getFullYear();
+  const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  return days[d.getDay()] + ' • ' + d.getDate().toString().padStart(2,'0') + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
 }
 
 function buildToken(n, total) {
@@ -125,7 +127,7 @@ function buildToken(n, total) {
     + verifyBadge
     + '</div>'
     + '<div class="tok-meal-row" style="background:' + bg + ';color:' + acc + ';">' + mealLabel + '</div>'
-    + '<div class="tok-date" style="color:#555e6b;font-weight:700;font-size:.60rem;">' + getTodayDate() + '</div>'
+    + '<div class="tok-date" style="margin:6px 8px 6px;padding:4px 8px;background:' + bg + ';color:' + acc + ';border-radius:6px;font-family:Poppins,sans-serif;font-size:.52rem;font-weight:700;text-align:center;letter-spacing:.8px;">' + getTodayDate() + '</div>'
     + '</div>'
     + '</div>';
 }
