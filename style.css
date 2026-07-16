@@ -403,13 +403,19 @@ body::before {
 /* ── Token grid ───────────────────────────────────────────── */
 .token-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  max-width: 760px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-auto-rows: minmax(250px, auto);
+  gap: 14px;
+  max-width: 980px;
   margin: 0 auto;
   padding: 0 16px 50px;
   position: relative;
   z-index: 1;
+}
+
+.tok {
+  min-height: 250px;
+  aspect-ratio: 0.72 / 1;
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -601,7 +607,8 @@ body::before {
   .action-row { flex-direction: column; gap: 10px; margin-top: 18px; }
   .btn-print, .btn-pdf { padding: 13px; font-size: .95rem; }
   .preview-label { margin: 20px 0 12px; }
-  .token-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 0 10px 32px; }
+  .token-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; padding: 0 10px 32px; }
+  .tok { min-height: 220px; aspect-ratio: 0.72 / 1; }
   .tok-num { font-size: 1.5rem; }
 }
 @media (max-width: 360px) {
