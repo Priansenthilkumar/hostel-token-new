@@ -403,126 +403,157 @@ body::before {
 /* ── Token grid ───────────────────────────────────────────── */
 .token-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  grid-auto-rows: minmax(250px, auto);
-  gap: 14px;
-  max-width: 980px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  max-width: 760px;
   margin: 0 auto;
   padding: 0 16px 50px;
   position: relative;
   z-index: 1;
 }
 
-.tok {
-  min-height: 250px;
-  aspect-ratio: 0.72 / 1;
-}
-
 /* ══════════════════════════════════════════════════════════
-   TOKEN STYLES — DO NOT CHANGE
+   TOKEN STYLES
    ══════════════════════════════════════════════════════════ */
 .tok {
   background: #fff;
   border: 2px solid var(--bg);
-  border-radius: 10px;
+  border-radius: 14px;
   overflow: hidden;
   page-break-inside: avoid;
   break-inside: avoid;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 18px rgba(0,0,0,.10);
 }
-.tok-head {
-  background: var(--bg);
+
+/* ── Banner (top header) ── */
+.tok-banner {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 8px;
+  gap: 7px;
+  padding: 8px 10px;
+  position: relative;
+}
+.tok-banner::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--t-acc, #d4af37);
 }
 .tok-logo {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   object-fit: contain;
   flex-shrink: 0;
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
-  border-radius: 3px;
+  border-radius: 4px;
   background: #fff;
   padding: 2px;
 }
-.tok-college {
+.tok-banner-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+.tok-inst {
   font-family: 'Inter', sans-serif;
   color: #fff;
-  font-size: .58rem;
+  font-size: .60rem;
   font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: .5px;
-  line-height: 1.2;
-}
-.tok-body { text-align: center; padding: 8px 6px 6px; }
-.tok-label {
-  font-family: 'Inter', sans-serif;
-  font-size: .5rem;
-  color: #aaa;
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-  font-weight: 600;
-  margin-bottom: 2px;
-}
-.tok-num {
-  font-family: 'Inter', sans-serif;
-  font-size: 1.9rem;
-  font-weight: 800;
-  color: var(--bg);
-  line-height: 1;
-  letter-spacing: -.02em;
-  font-variant-numeric: tabular-nums;
-}
-.tok-line {
-  height: 2px;
-  background: var(--acc);
-  margin: 5px 8px;
-  border-radius: 2px;
-}
-.tok-meal {
-  font-family: 'Inter', sans-serif;
-  font-size: .62rem;
-  font-weight: 700;
-  color: var(--bg);
   text-transform: uppercase;
   letter-spacing: .6px;
 }
-.tok-foot {
+.tok-sub {
   font-family: 'Inter', sans-serif;
-  background: var(--bg);
-  color: var(--acc);
-  font-size: .52rem;
-  font-weight: 600;
-  text-align: center;
-  padding: 4px 6px;
-  letter-spacing: .6px;
+  color: rgba(255,255,255,.65);
+  font-size: .50rem;
+  font-weight: 500;
+  letter-spacing: .4px;
 }
-/* Verification symbol badge — Wed & Fri only */
-.tok-verify {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border: 1.5px solid;
-  border-radius: 50%;
-  margin: 3px auto 2px;
-  padding: 3px;
-}
-.tok-verify svg { width: 100%; height: 100%; display: block; }
-/* Symbol in token header (top-right) */
 .tok-head-sym {
   margin-left: auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
+  opacity: .9;
 }
 .tok-head-sym svg { width: 100%; height: 100%; display: block; }
+
+/* ── Body ── */
+.tok-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 8px 0;
+  gap: 0;
+}
+
+/* ── Number wrap (circle ring) ── */
+.tok-num-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2.5px solid;
+  margin-bottom: 0;
+  position: relative;
+}
+.tok-no-label {
+  font-family: 'Inter', sans-serif;
+  font-size: .42rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  opacity: .55;
+  line-height: 1;
+  margin-bottom: 1px;
+}
+.tok-num {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.65rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Verify badge inside ring ── */
+.tok-verify {
+  position: absolute;
+  bottom: -8px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.18);
+}
+.tok-verify svg { width: 100%; height: 100%; display: block; stroke: #fff; }
+
+/* ── Meal footer strip ── */
+.tok-meal-row {
+  width: 100%;
+  margin-top: 10px;
+  padding: 5px 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: .58rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+}
 /* ══════════════════════════════════════════════════════════ */
 
 .print-only { display: none; }
@@ -551,36 +582,22 @@ body::before {
     box-sizing: border-box !important;
   }
   .tok {
-    display: block !important;
+    display: flex !important;
+    flex-direction: column !important;
     break-inside: avoid !important;
     page-break-inside: avoid !important;
-    border-radius: 6px !important;
+    border-radius: 10px !important;
     overflow: hidden !important;
     box-shadow: none !important;
     border-width: 1.5px !important;
     border-style: solid !important;
   }
-  .tok-head {
-    display: flex !important;
-    align-items: center !important;
-    gap: 5px !important;
-    padding: 5px 7px !important;
-  }
-  .tok-logo {
-    display: block !important;
-    width: 24px !important;
-    height: 24px !important;
-    background: #fff !important;
-    border-radius: 3px !important;
-    padding: 2px !important;
-  }
-  .tok-college { display: block !important; }
-  .tok-body {
-    display: block !important;
-    text-align: center !important;
-    padding: 7px 5px 5px !important;
-  }
-  .tok-label, .tok-num, .tok-line, .tok-meal { display: block !important; }
+  .tok-banner { display: flex !important; align-items: center !important; padding: 7px 9px !important; }
+  .tok-logo { display: block !important; width: 26px !important; height: 26px !important; }
+  .tok-banner-text, .tok-inst, .tok-sub { display: block !important; }
+  .tok-body { display: flex !important; flex-direction: column !important; align-items: center !important; padding: 8px 6px 0 !important; }
+  .tok-num-wrap { display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; }
+  .tok-no-label, .tok-num, .tok-meal-row { display: block !important; }
   @page { size: A4 portrait; margin: 0; }
 }
 
@@ -607,9 +624,9 @@ body::before {
   .action-row { flex-direction: column; gap: 10px; margin-top: 18px; }
   .btn-print, .btn-pdf { padding: 13px; font-size: .95rem; }
   .preview-label { margin: 20px 0 12px; }
-  .token-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; padding: 0 10px 32px; }
-  .tok { min-height: 220px; aspect-ratio: 0.72 / 1; }
-  .tok-num { font-size: 1.5rem; }
+  .token-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 0 10px 32px; }
+  .tok-num { font-size: 1.3rem; }
+  .tok-num-wrap { width: 60px; height: 60px; }
 }
 @media (max-width: 360px) {
   .panel { margin: 6px; padding: 12px 10px; }

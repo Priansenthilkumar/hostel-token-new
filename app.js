@@ -101,25 +101,26 @@ function padNum(n, total) {
 
 function buildToken(n, total) {
   const num = padNum(n, total);
-  const mealSVG = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:3px"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>';
   const sym = getVerifySymbol();
-  const verifyHTML = sym
-    ? '<div class="tok-verify" style="border-color:' + acc + ';color:' + bg + ';" title="Verification Symbol">'
-      + sym
-      + '</div>'
+  const verifyBadge = sym
+    ? '<div class="tok-verify" style="background:' + acc + ';" title="Verification Symbol">' + sym + '</div>'
     : '';
-  return '<div class="tok" style="border-color:' + bg + ';">'
-    + '<div class="tok-head" style="background-color:' + bg + ';">'
-    + '<img class="tok-logo" src="' + LOGO + '" alt="KPR" loading="eager"/>'
-    + '<div class="tok-college" style="color:#ffffff;">KPR Mess Token</div>'
+  return '<div class="tok" style="--t-bg:' + bg + ';--t-acc:' + acc + ';border-color:' + bg + ';">' 
+    + '<div class="tok-banner" style="background:' + bg + ';">' 
+    + '<img class="tok-logo" src="' + LOGO + '" alt="KPR"/>'
+    + '<div class="tok-banner-text">'
+    + '<span class="tok-inst">KPR Institute</span>'
+    + '<span class="tok-sub">Mess Token</span>'
+    + '</div>'
     + (sym ? '<div class="tok-head-sym" style="color:' + acc + ';">' + sym + '</div>' : '')
     + '</div>'
     + '<div class="tok-body">'
-    + '<div class="tok-label">Token No.</div>'
-    + '<div class="tok-num" style="color:' + bg + ';">' + num + '</div>'
-    + verifyHTML
-    + '<div class="tok-line" style="background-color:' + acc + ';"></div>'
-    + '<div class="tok-meal" style="color:' + bg + ';">' + mealSVG + mealLabel + '</div>'
+    + '<div class="tok-num-wrap" style="border-color:' + acc + ';background:' + bg + '0f;">'
+    + '<span class="tok-no-label" style="color:' + bg + ';">NO.</span>'
+    + '<span class="tok-num" style="color:' + bg + ';">' + num + '</span>'
+    + verifyBadge
+    + '</div>'
+    + '<div class="tok-meal-row" style="background:' + bg + ';color:' + acc + ';">' + mealLabel + '</div>'
     + '</div>'
     + '</div>';
 }
@@ -235,12 +236,17 @@ async function savePDF() {
           boxSizing: 'border-box',
         });
         const scale = tokH / 120;
-        tok.querySelector('.tok-num').style.fontSize = Math.max(10, Math.round(28 * scale)) + 'px';
-        tok.querySelector('.tok-meal').style.fontSize = Math.max(7, Math.round(10 * scale)) + 'px';
-        tok.querySelector('.tok-label').style.fontSize = Math.max(6, Math.round(8 * scale)) + 'px';
+        tok.querySelector('.tok-num').style.fontSize = Math.max(10, Math.round(26 * scale)) + 'px';
+        tok.querySelector('.tok-meal-row').style.fontSize = Math.max(6, Math.round(9 * scale)) + 'px';
+        tok.querySelector('.tok-inst').style.fontSize = Math.max(5, Math.round(8 * scale)) + 'px';
+        const wrap2 = tok.querySelector('.tok-num-wrap');
+        const sz = Math.max(40, Math.round(72 * scale));
+        wrap2.style.width = sz + 'px';
+        wrap2.style.height = sz + 'px';
         tok.querySelector('.tok-body').style.flex = '1';
         tok.querySelector('.tok-body').style.display = 'flex';
         tok.querySelector('.tok-body').style.flexDirection = 'column';
+        tok.querySelector('.tok-body').style.alignItems = 'center';
         tok.querySelector('.tok-body').style.justifyContent = 'center';
         wrap.appendChild(tok);
       }
