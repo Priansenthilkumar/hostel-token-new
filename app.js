@@ -109,8 +109,7 @@ function buildToken(n, total) {
     + '<div class="tok-banner" style="background:' + bg + ';">' 
     + '<img class="tok-logo" src="' + LOGO + '" alt="KPR"/>'
     + '<div class="tok-banner-text">'
-    + '<span class="tok-inst">KPR Institute</span>'
-    + '<span class="tok-sub">Mess Token</span>'
+    + '<span class="tok-inst">KPR Mess Token</span>'
     + '</div>'
     + (sym ? '<div class="tok-head-sym" style="color:' + acc + ';">' + sym + '</div>' : '')
     + '</div>'

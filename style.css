@@ -459,17 +459,10 @@ body::before {
 .tok-inst {
   font-family: 'Inter', sans-serif;
   color: #fff;
-  font-size: .60rem;
+  font-size: .65rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: .6px;
-}
-.tok-sub {
-  font-family: 'Inter', sans-serif;
-  color: rgba(255,255,255,.65);
-  font-size: .50rem;
-  font-weight: 500;
-  letter-spacing: .4px;
 }
 .tok-head-sym {
   margin-left: auto;
