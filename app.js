@@ -117,7 +117,7 @@ function buildToken(n, total) {
     + '</div>'
     + '<div class="tok-body">'
     + '<div class="tok-num-wrap" style="border-color:' + acc + ';background:' + bg + '0f;">'
-    + '<span class="tok-num" style="color:' + bg + ';font-size:2.2rem;">' + num + '</span>'
+    + '<span class="tok-num" style="color:' + bg + ';font-size:' + (num.length > 2 ? (num.length > 3 ? '1.1rem' : '1.5rem') : '2.2rem') + ';">' + num + '</span>'
     + '</div>'
     + '<div class="tok-meal-row" style="background:' + bg + ';color:' + acc + ';">' + mealLabel + '</div>'
     + '<div class="tok-date" style="margin:6px 8px 6px;padding:4px 8px;background:' + bg + ';color:' + acc + ';border-radius:6px;font-family:Poppins,sans-serif;font-size:.52rem;font-weight:700;text-align:center;letter-spacing:.8px;">' + getTodayDate() + '</div>'
