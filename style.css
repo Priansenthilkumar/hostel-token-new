@@ -323,16 +323,32 @@ body {
 .btn-print:active { transform: translateY(0); }
 
 .btn-pdf {
-  background: linear-gradient(135deg, #f59e0b 0%, #d4af37 50%, #f97316 100%);
-  color: #1a1a2e;
-  box-shadow: 0 6px 24px rgba(245,158,11,.40);
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  color: #d4af37;
+  box-shadow: 0 0 0 1.5px #d4af37, 0 0 18px 4px rgba(212,175,55,.35), 0 6px 24px rgba(0,0,0,.40);
+  border: none;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: .08em;
+}
+.btn-pdf::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(212,175,55,.15) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform .55s ease;
+}
+.btn-pdf:hover::after {
+  transform: translateX(100%);
 }
 .btn-pdf:hover {
-  background: linear-gradient(135deg, #fbbf24 0%, #f0c040 50%, #fb923c 100%);
-  box-shadow: 0 10px 32px rgba(245,158,11,.52);
+  background: linear-gradient(135deg, #0f3460 0%, #16213e 50%, #1a1a2e 100%);
+  box-shadow: 0 0 0 1.5px #f0c040, 0 0 28px 8px rgba(212,175,55,.55), 0 8px 32px rgba(0,0,0,.45);
+  color: #f0c040;
   transform: translateY(-2px);
 }
-.btn-pdf:active { transform: translateY(0); }
+.btn-pdf:active { transform: translateY(0); box-shadow: 0 0 0 1.5px #d4af37, 0 0 12px 3px rgba(212,175,55,.30); }
 
 
 
