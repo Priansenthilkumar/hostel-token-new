@@ -422,15 +422,16 @@ body {
 .tok-banner-text {
   display: flex;
   flex-direction: column;
-  line-height: 1.15;
+  line-height: 1.1;
 }
 .tok-inst {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Raleway', sans-serif;
   color: #fff;
-  font-size: .65rem;
+  font-size: .78rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: .6px;
+  letter-spacing: .12em;
+  line-height: 1.05;
 }
 .tok-head-sym {
   margin-left: auto;
