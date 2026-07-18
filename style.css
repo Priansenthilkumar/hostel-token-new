@@ -423,6 +423,7 @@ body {
   display: flex;
   flex-direction: column;
   line-height: 1.1;
+  min-width: 0;
 }
 .tok-inst {
   font-family: 'Raleway', sans-serif;
@@ -432,6 +433,9 @@ body {
   text-transform: uppercase;
   letter-spacing: .12em;
   line-height: 1.05;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .tok-head-sym {
   margin-left: auto;
