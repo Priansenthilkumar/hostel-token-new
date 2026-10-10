@@ -449,12 +449,21 @@ body {
   max-width: 90%;
 }
 .tok-date {
+  margin: 4px auto 10px auto;
+  padding: 4px 14px;
+  background-color: #0B1F5E;
+  color: #D4AF37 !important;
+  border: 1px solid #D4AF37;
+  border-radius: 20px;
   font-family: 'Inter', sans-serif;
   font-size: .55rem;
-  font-weight: 700;
+  font-weight: 800;
   text-align: center;
-  letter-spacing: .5px;
-  padding: 2px 8px 5px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: max-content;
+  max-width: 90%;
 }
 /* ══════════════════════════════════════════════════════════ */
 
