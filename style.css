@@ -434,13 +434,13 @@ body {
 .tok-meal-row {
   width: 100%;
   margin-top: 10px;
-  padding: 5px 8px;
+  padding: 4px 8px;
   font-family: 'Inter', sans-serif;
-  font-size: .58rem;
-  font-weight: 700;
+  font-size: .70rem;
+  font-weight: 800;
   text-align: center;
   text-transform: uppercase;
-  letter-spacing: .8px;
+  letter-spacing: 1px;
 }
 .tok-date {
   font-family: 'Inter', sans-serif;
