@@ -37,6 +37,7 @@ let acc = '#d4af37';
 let count = 20;
 let tokensPerPage = 8;
 let mealLabel = localStorage.getItem('kpriet_meal') || 'Friday Lunch';
+let tokenDate = localStorage.getItem('kpriet_token_date');
 const MAX_TOKENS = 9999;
 const TPP_KEY = 'kpriet_tpp';
 let _renderTimer = null;
@@ -49,6 +50,13 @@ function scheduleRender() {
 function setMealLabel(val) {
   mealLabel = val.trim() || 'Friday Lunch';
   localStorage.setItem('kpriet_meal', mealLabel);
+  scheduleRender();
+}
+
+function setTokenDate(val) {
+  if (!val) return;
+  tokenDate = val;
+  localStorage.setItem('kpriet_token_date', tokenDate);
   scheduleRender();
 }
 
@@ -99,8 +107,23 @@ function padNum(n, total) {
   return String(n).padStart(digits, '0');
 }
 
-function getTodayDate() {
-  const d = new Date();
+function getDateInputValue(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return year + '-' + month + '-' + day;
+}
+
+// Initialize tokenDate with today's date if not set in localStorage
+if (!tokenDate) {
+  tokenDate = getDateInputValue(new Date());
+}
+
+function formatTokenDate(value) {
+  if (!value) return '';
+  const parts = value.split('-').map(Number);
+  const d = new Date(parts[0], parts[1] - 1, parts[2]);
+  if (isNaN(d.getTime())) return '';
   const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
   const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
   return days[d.getDay()] + ' • ' + d.getDate().toString().padStart(2,'0') + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
@@ -120,7 +143,7 @@ function buildToken(n, total) {
     + '<span class="tok-num" style="color:' + bg + ';font-size:' + (num.length > 2 ? (num.length > 3 ? '1.1rem' : '1.5rem') : '2.2rem') + ';">' + num + '</span>'
     + '</div>'
     + '<div class="tok-meal-row" style="background:' + bg + ';color:' + acc + ';">' + mealLabel + '</div>'
-    + '<div class="tok-date" style="margin:6px 8px 6px;padding:4px 8px;background:' + bg + ';color:' + acc + ';border-radius:6px;font-family:Poppins,sans-serif;font-size:.52rem;font-weight:700;text-align:center;letter-spacing:.8px;">' + getTodayDate() + '</div>'
+    + '<div class="tok-date" style="margin:6px 8px 6px;padding:4px 8px;background:' + bg + ';color:' + acc + ';border-radius:6px;font-family:Poppins,sans-serif;font-size:.52rem;font-weight:700;text-align:center;letter-spacing:.8px;">' + formatTokenDate(tokenDate) + '</div>'
     + '</div>'
     + '</div>';
 }
@@ -168,6 +191,8 @@ function setColor(b, a, el) {
 window.addEventListener('DOMContentLoaded', function () {
   var mi = document.getElementById('mealLabel');
   if (mi) mi.value = mealLabel;
+  var di = document.getElementById('tokenDate');
+  if (di) di.value = tokenDate;
   loadTPP();
   syncTPPButtons();
   updateTPPHint();

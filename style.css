@@ -620,3 +620,9 @@ body {
   .count-row button { width: 32px; height: 32px; }
   #countDisplay { width: 62px; font-size: 1.1rem; }
 }
+
+/* Fix calendar icon visibility on dark background */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
