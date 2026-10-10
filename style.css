@@ -1,7 +1,7 @@
 /* ── Root & Reset ─────────────────────────────────────────── */
 :root {
-  --bg: #0a1f5c;
-  --acc: #d4af37;
+  --bg: #0B1F5E;
+  --acc: #D4AF37;
   --glass-bg: rgba(255,255,255,0.72);
   --glass-border: rgba(255,255,255,0.55);
   --panel-shadow: 0 8px 40px rgba(10,31,92,.18), 0 2px 8px rgba(10,31,92,.10);
@@ -15,7 +15,7 @@ body {
   font-family: 'Poppins', sans-serif;
   min-height: 100vh;
   padding-bottom: 70px;
-  background-image: url('images/background.jpg');
+  background-image: url('kpriet_background.jpg');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
@@ -434,9 +434,9 @@ body {
 .tok-meal-row {
   margin: 10px auto 6px auto;
   padding: 4px 14px;
-  background-color: #0B1F5E;
-  color: #D4AF37 !important;
-  border: 1px solid #D4AF37;
+  background-color: var(--bg);
+  color: var(--acc) !important;
+  border: 1px solid var(--acc);
   border-radius: 20px;
   font-family: 'Inter', sans-serif;
   font-size: .62rem;
@@ -451,9 +451,9 @@ body {
 .tok-date {
   margin: 4px auto 10px auto;
   padding: 4px 14px;
-  background-color: #0B1F5E;
-  color: #D4AF37 !important;
-  border: 1px solid #D4AF37;
+  background-color: var(--bg);
+  color: var(--acc) !important;
+  border: 1px solid var(--acc);
   border-radius: 20px;
   font-family: 'Inter', sans-serif;
   font-size: .55rem;

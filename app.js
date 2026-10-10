@@ -32,8 +32,8 @@ function getVerifySymbol() {
   return _cachedSymbol;
 }
 
-let bg  = '#0a1f5c';
-let acc = '#d4af37';
+let bg  = '#0B1F5E';
+let acc = '#D4AF37';
 let count = 20;
 let tokensPerPage = 8;
 let mealLabel = localStorage.getItem('kpriet_meal') || 'Friday Lunch';
@@ -41,6 +41,7 @@ let tokenDate = localStorage.getItem('kpriet_token_date');
 const MAX_TOKENS = 9999;
 const TPP_KEY = 'kpriet_tpp';
 let _renderTimer = null;
+let isGeneratingPDF = false;
 
 function scheduleRender() {
   if (_renderTimer) clearTimeout(_renderTimer);
@@ -114,8 +115,8 @@ function getDateInputValue(date) {
   return year + '-' + month + '-' + day;
 }
 
-// Initialize tokenDate with today's date if not set in localStorage
-if (!tokenDate) {
+// Initialize tokenDate with today's local date if empty or invalid
+if (!tokenDate || isNaN(new Date(tokenDate).getTime())) {
   tokenDate = getDateInputValue(new Date());
 }
 
@@ -200,8 +201,16 @@ window.addEventListener('DOMContentLoaded', function () {
 });
 
 async function savePDF() {
+  if (isGeneratingPDF) return;
   const btn = document.querySelector('.btn-pdf');
   const original = btn.innerHTML;
+
+  if (!window.jspdf || !window.html2canvas) {
+    alert('PDF generation libraries failed to load. Please check your internet connection or try again.');
+    return;
+  }
+
+  isGeneratingPDF = true;
   btn.innerHTML = 'Generating…';
   btn.disabled = true;
 
@@ -209,7 +218,20 @@ async function savePDF() {
   const A4_W = 210, A4_H = 297;
   const MARGIN = 10;          // mm
   const GAP_MM = 2;           // mm gap between tokens
-  const COLS = 5, ROWS = 6, TPP = 30;
+  
+  const TPP = tokensPerPage;
+  let COLS = 2, ROWS = 2;
+  if (TPP <= 4) { COLS = 2; ROWS = 2; }
+  else if (TPP <= 6) { COLS = 2; ROWS = 3; }
+  else if (TPP <= 8) { COLS = 2; ROWS = 4; }
+  else if (TPP <= 10) { COLS = 2; ROWS = 5; }
+  else if (TPP <= 12) { COLS = 3; ROWS = 4; }
+  else if (TPP <= 15) { COLS = 3; ROWS = 5; }
+  else if (TPP <= 20) { COLS = 4; ROWS = 5; }
+  else if (TPP <= 24) { COLS = 4; ROWS = 6; }
+  else if (TPP <= 30) { COLS = 5; ROWS = 6; }
+  else { COLS = 5; ROWS = Math.ceil(TPP / 5); }
+
   const RENDER_SCALE = 3;
   const PX_TO_MM = 25.4 / 96;
   const MM_TO_PX = 96 / 25.4;
@@ -248,6 +270,8 @@ async function savePDF() {
   const pdf        = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const totalPages = Math.ceil(count / TPP);
 
+  let wrap = null;
+
   try {
     for (let page = 0; page < totalPages; page++) {
       if (page > 0) pdf.addPage();
@@ -255,7 +279,7 @@ async function savePDF() {
       const start = page * TPP + 1;
       const end   = Math.min(start + TPP - 1, count);
 
-      const wrap = document.createElement('div');
+      wrap = document.createElement('div');
       Object.assign(wrap.style, {
         position:            'fixed',
         top:                 '-99999px',
@@ -310,12 +334,18 @@ async function savePDF() {
 
       // addImage at finalGridMmW x finalGridMmH — jsPDF scales canvas to fit exactly
       pdf.addImage(canvas.toDataURL('image/png'), 'PNG', xOff, yOff, finalGridMmW, finalGridMmH);
+      wrap = null; // cleared for next iteration
     }
 
     pdf.save('KPR_Mess_Tokens.pdf');
   } catch (err) {
     console.error('PDF error:', err);
+    alert('An error occurred while generating the PDF. Please try again.');
   } finally {
+    if (wrap && document.body.contains(wrap)) {
+      document.body.removeChild(wrap);
+    }
+    isGeneratingPDF = false;
     btn.innerHTML = original;
     btn.disabled = false;
   }
